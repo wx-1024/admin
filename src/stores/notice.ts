@@ -9,6 +9,20 @@ export interface NoticeItem {
   type: NoticeType
 }
 
+const simplifyNoticeMessage = (input: string) => {
+  let value = String(input || '').trim()
+  if (!value) {
+    return ''
+  }
+  value = value.replace(
+    /^(操作失败|請求失敗|请求失败|提交失败|保存失败|删除失败|更新失败|创建失败|上傳失敗|上传失败|operation failed|request failed)\s*[:：\-]\s*/i,
+    ''
+  )
+  return value
+    .toLowerCase()
+    .replace(/[\s`~!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?，。！？；：、“”‘’（）【】《》·…—-]/g, '')
+}
+
 export const useNoticeStore = defineStore('admin-notice', () => {
   const items = ref<NoticeItem[]>([])
   const timerMap = new Map<number, number>()
@@ -23,9 +37,27 @@ export const useNoticeStore = defineStore('admin-notice', () => {
     items.value = items.value.filter((item) => item.id !== id)
   }
 
+  const hasSimilarVisibleNotice = (kind: NoticeType, message: string) => {
+    const current = simplifyNoticeMessage(message)
+    if (!current) {
+      return false
+    }
+    return items.value.some((item) => {
+      if (item.type !== kind) {
+        return false
+      }
+      const existing = simplifyNoticeMessage(item.message)
+      if (!existing) {
+        return false
+      }
+      return existing === current || existing.includes(current) || current.includes(existing)
+    })
+  }
+
   const show = (msg: string, kind: NoticeType = 'error', duration = 6000) => {
     const message = msg?.trim()
     if (!message) return
+    if (hasSimilarVisibleNotice(kind, message)) return
 
     const id = ++sequence
     items.value.push({
