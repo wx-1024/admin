@@ -14,6 +14,15 @@ const loading = ref(false)
 const smtpTesting = ref(false)
 const supportedLanguages = ['zh-CN', 'zh-TW', 'en-US'] as const
 type SupportedLanguage = (typeof supportedLanguages)[number]
+type SiteScriptPosition = 'head' | 'body_end'
+type SiteScriptItem = {
+  name: string
+  enabled: boolean
+  position: SiteScriptPosition
+  code: string
+}
+
+const siteScriptsMaxCount = 20
 const currentLang = ref<SupportedLanguage>('zh-CN')
 const currentTab = ref('basic')
 
@@ -25,6 +34,7 @@ const languages = computed(() => [
 
 const tabs = computed(() => [
   { label: t('admin.settings.tabs.basic'), value: 'basic' },
+  { label: t('admin.settings.tabs.scripts'), value: 'scripts' },
   { label: t('admin.settings.tabs.about'), value: 'about' },
   { label: t('admin.settings.tabs.legal'), value: 'legal' },
   { label: t('admin.settings.tabs.smtp'), value: 'smtp' },
@@ -34,6 +44,43 @@ const tabs = computed(() => [
 ])
 
 const createLocalizedField = () => ({ 'zh-CN': '', 'zh-TW': '', 'en-US': '' } as Record<SupportedLanguage, string>)
+const createSiteScriptItem = (): SiteScriptItem => ({
+  name: '',
+  enabled: true,
+  position: 'head',
+  code: '',
+})
+
+const normalizeSiteScriptPosition = (raw: unknown): SiteScriptPosition => {
+  return raw === 'body_end' ? 'body_end' : 'head'
+}
+
+const normalizeSiteScriptEnabled = (raw: unknown): boolean => {
+  if (typeof raw === 'boolean') return raw
+  if (typeof raw === 'number') return raw !== 0
+  if (typeof raw === 'string') {
+    const value = raw.trim().toLowerCase()
+    return value === '1' || value === 'true' || value === 'yes' || value === 'on'
+  }
+  return false
+}
+
+const normalizeSiteScripts = (raw: unknown): SiteScriptItem[] => {
+  if (!Array.isArray(raw)) return []
+  return raw
+    .map((item) => {
+      if (!item || typeof item !== 'object') return null
+      const value = item as Record<string, unknown>
+      return {
+        name: typeof value.name === 'string' ? value.name : '',
+        enabled: normalizeSiteScriptEnabled(value.enabled),
+        position: normalizeSiteScriptPosition(value.position),
+        code: typeof value.code === 'string' ? value.code : '',
+      } as SiteScriptItem
+    })
+    .filter((item): item is SiteScriptItem => !!item)
+    .slice(0, siteScriptsMaxCount)
+}
 
 const normalizeLocalizedField = (raw: any): Record<SupportedLanguage, string> => {
   const normalized = createLocalizedField()
@@ -83,6 +130,7 @@ const form = reactive({
     terms: createLocalizedField(),
     privacy: createLocalizedField(),
   },
+  scripts: [] as SiteScriptItem[],
 })
 
 const smtpForm = reactive({
@@ -234,6 +282,9 @@ const fetchSettings = async () => {
           }
         })
       }
+
+      const scripts = normalizeSiteScripts(data.scripts)
+      form.scripts.splice(0, form.scripts.length, ...scripts)
     }
 
     if (smtpRes.data && smtpRes.data.data) {
@@ -303,6 +354,7 @@ const saveSiteSettings = async () => {
       seo: form.seo,
       about: form.about,
       legal: form.legal,
+      scripts: form.scripts,
     },
   }
   await adminAPI.updateSettings(payload)
@@ -318,6 +370,18 @@ const addAboutServiceItem = () => {
 
 const removeAboutServiceItem = (index: number) => {
   form.about.services.items.splice(index, 1)
+}
+
+const addSiteScriptItem = () => {
+  if (form.scripts.length >= siteScriptsMaxCount) {
+    notifyError(t('admin.settings.scripts.maxScriptsHint', { max: siteScriptsMaxCount }))
+    return
+  }
+  form.scripts.push(createSiteScriptItem())
+}
+
+const removeSiteScriptItem = (index: number) => {
+  form.scripts.splice(index, 1)
 }
 
 const saveSMTPSettings = async () => {
@@ -571,6 +635,64 @@ onMounted(() => {
           <div class="space-y-2">
             <label class="text-xs font-medium text-muted-foreground">{{ t('admin.settings.contact.whatsapp') }}</label>
             <Input v-model="form.contact.whatsapp" :placeholder="t('admin.settings.contact.whatsappPlaceholder')" />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div v-show="currentTab === 'scripts'" class="space-y-6">
+      <div class="rounded-xl border border-border bg-card">
+        <div class="flex items-center justify-between border-b border-border bg-muted/40 px-6 py-4">
+          <div>
+            <h2 class="text-lg font-semibold">{{ t('admin.settings.scripts.title') }}</h2>
+            <p class="mt-1 text-xs text-muted-foreground">{{ t('admin.settings.scripts.subtitle') }}</p>
+          </div>
+          <Button type="button" size="sm" variant="outline" @click="addSiteScriptItem">
+            {{ t('admin.settings.scripts.addScript') }}
+          </Button>
+        </div>
+
+        <div class="space-y-4 p-6">
+          <p class="rounded-lg border border-border bg-muted/20 px-3 py-2 text-xs text-muted-foreground">
+            {{ t('admin.settings.scripts.injectTip') }}
+          </p>
+
+          <div v-if="form.scripts.length === 0" class="rounded-lg border border-dashed border-border bg-muted/10 px-3 py-6 text-center text-xs text-muted-foreground">
+            {{ t('admin.settings.scripts.empty') }}
+          </div>
+
+          <div v-for="(script, index) in form.scripts" :key="`site-script-${index}`" class="space-y-4 rounded-lg border border-border bg-muted/10 p-4">
+            <div class="flex items-center justify-between gap-3">
+              <h3 class="text-sm font-semibold">{{ t('admin.settings.scripts.scriptItem', { index: index + 1 }) }}</h3>
+              <Button type="button" size="sm" variant="destructive" @click="removeSiteScriptItem(index)">
+                {{ t('admin.common.delete') }}
+              </Button>
+            </div>
+
+            <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
+              <div class="space-y-2 md:col-span-2">
+                <label class="text-xs font-medium text-muted-foreground">{{ t('admin.settings.scripts.name') }}</label>
+                <Input v-model="script.name" :placeholder="t('admin.settings.scripts.namePlaceholder')" />
+              </div>
+
+              <div class="space-y-2">
+                <label class="text-xs font-medium text-muted-foreground">{{ t('admin.settings.scripts.position') }}</label>
+                <select v-model="script.position" class="h-10 w-full rounded-md border border-input bg-background px-3 text-sm">
+                  <option value="head">{{ t('admin.settings.scripts.positionHead') }}</option>
+                  <option value="body_end">{{ t('admin.settings.scripts.positionBodyEnd') }}</option>
+                </select>
+              </div>
+            </div>
+
+            <label class="flex items-center gap-2 text-sm text-muted-foreground">
+              <input v-model="script.enabled" type="checkbox" class="h-4 w-4 accent-primary" />
+              {{ t('admin.settings.scripts.enabled') }}
+            </label>
+
+            <div class="space-y-2">
+              <label class="text-xs font-medium text-muted-foreground">{{ t('admin.settings.scripts.code') }}</label>
+              <Textarea v-model="script.code" rows="7" class="font-mono text-xs" :placeholder="t('admin.settings.scripts.codePlaceholder')" />
+            </div>
           </div>
         </div>
       </div>
