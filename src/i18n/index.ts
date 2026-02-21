@@ -64,10 +64,10 @@ const messages = {
       },
     },
     admin: {
-      brand: 'Dujiao-Next Admin',
+      brand: 'Teemo Shop Admin',
       layout: {
-        controlRoom: 'Dujiao-Next Admin 控制台',
-        workspace: 'Dujiao-Next Admin 后台',
+        controlRoom: 'Teemo Shop Admin 控制台',
+        workspace: 'Teemo Shop Admin 后台',
       },
       common: {
         refresh: '刷新',
@@ -1114,7 +1114,7 @@ const messages = {
           title: '品牌展示配置',
           subtitle: '配置前台导航栏品牌展示文案',
           siteName: '站点名称',
-          siteNamePlaceholder: '例如：Dujiao-Next',
+          siteNamePlaceholder: "例如：CaptainTeemo'S Shop",
         },
         seo: {
           title: 'SEO 配置',
@@ -1158,7 +1158,7 @@ const messages = {
           heroMainTitle: '主标题',
           heroMainTitlePlaceholder: '例如：关于我们',
           heroSubtitle: '副标题',
-          heroSubtitlePlaceholder: '例如：了解Dujiao-Next',
+          heroSubtitlePlaceholder: "例如：了解CaptainTeemo'S Shop",
           introductionTitle: '简介内容',
           introductionSubtitle: '用于展示品牌介绍与说明',
           introductionPlaceholder: '请输入关于我们简介内容',
@@ -1212,7 +1212,7 @@ const messages = {
           from: '发件邮箱',
           fromPlaceholder: '如 no-reply[at]example.com',
           fromName: '发件人名称',
-          fromNamePlaceholder: '如 Dujiao-Next',
+          fromNamePlaceholder: "如 CaptainTeemo'S Shop",
           useTLS: '启用 STARTTLS',
           useSSL: '启用 SSL',
           verifyCode: {
@@ -1364,10 +1364,10 @@ const messages = {
       },
     },
     admin: {
-      brand: 'Dujiao-Next Admin',
+      brand: 'Teemo Shop Admin',
       layout: {
-        controlRoom: 'Dujiao-Next Admin 控制台',
-        workspace: 'Dujiao-Next Admin 後台',
+        controlRoom: 'Teemo Shop Admin 控制台',
+        workspace: 'Teemo Shop Admin 後台',
       },
       common: {
         refresh: '重新整理',
@@ -2414,7 +2414,7 @@ const messages = {
           title: '品牌展示配置',
           subtitle: '配置前台導覽列品牌展示文案',
           siteName: '站點名稱',
-          siteNamePlaceholder: '例如：Dujiao-Next',
+          siteNamePlaceholder: "例如：CaptainTeemo'S Shop",
         },
         seo: {
           title: 'SEO 配置',
@@ -2458,7 +2458,7 @@ const messages = {
           heroMainTitle: '主標題',
           heroMainTitlePlaceholder: '例如：關於我們',
           heroSubtitle: '副標題',
-          heroSubtitlePlaceholder: '例如：了解Dujiao-Next',
+          heroSubtitlePlaceholder: "例如：了解CaptainTeemo'S Shop",
           introductionTitle: '簡介內容',
           introductionSubtitle: '用於展示品牌介紹與說明',
           introductionPlaceholder: '請輸入關於我們簡介內容',
@@ -2512,7 +2512,7 @@ const messages = {
           from: '寄件郵箱',
           fromPlaceholder: '例如 no-reply[at]example.com',
           fromName: '寄件者名稱',
-          fromNamePlaceholder: '例如 Dujiao-Next',
+          fromNamePlaceholder: "例如 CaptainTeemo'S Shop",
           useTLS: '啟用 STARTTLS',
           useSSL: '啟用 SSL',
           verifyCode: {
@@ -2664,10 +2664,10 @@ const messages = {
       },
     },
     admin: {
-      brand: 'Dujiao-Next Admin',
+      brand: 'Teemo Shop Admin',
       layout: {
-        controlRoom: 'Dujiao-Next Admin Control Panel',
-        workspace: 'Dujiao-Next Admin Workspace',
+        controlRoom: 'Teemo Shop Admin Control Panel',
+        workspace: 'Teemo Shop Admin Workspace',
       },
       common: {
         refresh: 'Refresh',
@@ -3714,7 +3714,7 @@ const messages = {
           title: 'Brand Display',
           subtitle: 'Configure brand text shown on front-end navbar',
           siteName: 'Site name',
-          siteNamePlaceholder: 'e.g. Dujiao-Next',
+          siteNamePlaceholder: "e.g. CaptainTeemo'S Shop",
         },
         seo: {
           title: 'SEO Settings',
@@ -3758,7 +3758,7 @@ const messages = {
           heroMainTitle: 'Main title',
           heroMainTitlePlaceholder: 'e.g. About Us',
           heroSubtitle: 'Subtitle',
-          heroSubtitlePlaceholder: 'e.g. Learn about Dujiao-Next',
+          heroSubtitlePlaceholder: "e.g. Learn about CaptainTeemo'S Shop",
           introductionTitle: 'Introduction',
           introductionSubtitle: 'Describe your brand and service highlights',
           introductionPlaceholder: 'Enter introduction content',
@@ -3812,7 +3812,7 @@ const messages = {
           from: 'From email',
           fromPlaceholder: 'e.g. no-reply[at]example.com',
           fromName: 'From name',
-          fromNamePlaceholder: 'e.g. Dujiao-Next',
+          fromNamePlaceholder: "e.g. CaptainTeemo'S Shop",
           useTLS: 'Use STARTTLS',
           useSSL: 'Use SSL',
           verifyCode: {
